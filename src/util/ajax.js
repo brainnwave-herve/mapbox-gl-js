@@ -34,13 +34,15 @@ if (typeof Object.freeze == 'function') {
  * @property {string} url The URL to be requested.
  * @property {Object} headers The headers to be sent with the request.
  * @property {string} credentials `'same-origin'|'include'` Use 'include' to send cookies with cross-origin requests.
+ * @property {string} body The requets body, e.g. for POST requests
  */
 export type RequestParameters = {
     url: string,
     headers?: Object,
     method?: 'GET' | 'POST' | 'PUT',
     credentials?: 'same-origin' | 'include',
-    collectResourceTiming?: boolean
+    collectResourceTiming?: boolean,
+    body?: string
 };
 
 class AJAXError extends Error {
@@ -95,7 +97,7 @@ export const getJSON = function(requestParameters: RequestParameters, callback: 
             }
         }
     };
-    xhr.send();
+    xhr.send(requestParameters.body || null);
     return { cancel: () => xhr.abort() };
 };
 
@@ -120,7 +122,7 @@ export const getArrayBuffer = function(requestParameters: RequestParameters, cal
             callback(new AJAXError(xhr.statusText, xhr.status, requestParameters.url));
         }
     };
-    xhr.send();
+    xhr.send(requestParameters.body || null);
     return { cancel: () => xhr.abort() };
 };
 
